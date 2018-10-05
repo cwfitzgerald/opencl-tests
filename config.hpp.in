@@ -1,0 +1,3 @@
+#pragma once
+
+#define LOCATION "@CMAKE_SOURCE_DIR@"

@@ -8,7 +8,10 @@ file(GLOB_RECURSE SOURCES LIST_DIRECTORIES false CONFIGURE_DEPENDS "${CMAKE_CURR
 file(GLOB_RECURSE HEADERS LIST_DIRECTORIES false CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/simple/*.hpp")
 file(GLOB_RECURSE OPENCL LIST_DIRECTORIES false CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/simple/*.cl")
 
-add_executable(simple ${SOURCES} ${HEADERS} ${OPENCL})
-target_link_libraries(simple OpenCL::OpenCL)
+configure_file(config.hpp.in config.hpp)
 
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/simple/ FILES ${SOURCES} ${HEADERS} ${OPENCL})
+add_executable(simple ${SOURCES} ${HEADERS} config.hpp ${OPENCL})
+target_include_directories(simple PRIVATE ${CMAKE_BINARY_DIR})
+target_link_libraries(simple PRIVATE OpenCL::OpenCL)
+
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES} ${HEADERS} ${OPENCL})

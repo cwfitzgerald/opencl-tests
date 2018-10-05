@@ -1,6 +1,7 @@
 #define __CL_ENABLE_EXCEPTIONS
 #include <CL/cl.hpp>
 #include "util.hpp"
+#include "config.hpp"
 #include <iostream>
 #include <chrono>
 
@@ -36,7 +37,7 @@ int main() {
 				auto d_context = cl::Context(std::vector<cl::Device>{device});
 				auto d_queue = cl::CommandQueue(d_context, device);
 				auto d_buf_color = cl::Buffer(d_context, CL_MEM_WRITE_ONLY, sizeof(float) * 4 * width * height);
-				d_program = cl::Program(d_context, load_file("C:/Users/connor/Programming/OpenCL-Tests/simple/kernel.cl"), false);
+				d_program = cl::Program(d_context, load_file(LOCATION "/simple/kernel.cl"), false);
 				d_program.build(std::vector<cl::Device>{device});
 				auto d_kernel = cl::make_kernel<cl::Buffer, int, int>(d_program, "render_kernel");
 
@@ -82,7 +83,10 @@ int main() {
 
 			cl::copy(d_queue, d_buf_color, results.begin(), results.end());
 
+			auto after_copy = std::chrono::high_resolution_clock::now();
+
 			std::cout << "Rendered in: " << (end - start).count() / 1000 << "us\n";
+			std::cout << "Copied in: " << (after_copy - end).count() / 1000 << "us\n";
 		}
 	}
 	catch(cl::Error& e) {
